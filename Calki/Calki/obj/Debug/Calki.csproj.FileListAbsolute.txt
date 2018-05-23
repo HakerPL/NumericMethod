@@ -1,0 +1,7 @@
+C:\Adrian\Programowanie\Moje\C#\Calki\Calki\bin\Debug\Calki.exe.config
+C:\Adrian\Programowanie\Moje\C#\Calki\Calki\bin\Debug\Calki.exe
+C:\Adrian\Programowanie\Moje\C#\Calki\Calki\bin\Debug\Calki.pdb
+C:\Adrian\Programowanie\Moje\C#\Calki\Calki\obj\Debug\Calki.csprojResolveAssemblyReference.cache
+C:\Adrian\Programowanie\Moje\C#\Calki\Calki\obj\Debug\Calki.csproj.CoreCompileInputs.cache
+C:\Adrian\Programowanie\Moje\C#\Calki\Calki\obj\Debug\Calki.exe
+C:\Adrian\Programowanie\Moje\C#\Calki\Calki\obj\Debug\Calki.pdb
