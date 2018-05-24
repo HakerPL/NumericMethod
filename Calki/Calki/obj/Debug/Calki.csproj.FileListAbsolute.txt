@@ -5,3 +5,10 @@ C:\Adrian\Programowanie\Moje\C#\Calki\Calki\obj\Debug\Calki.csprojResolveAssembl
 C:\Adrian\Programowanie\Moje\C#\Calki\Calki\obj\Debug\Calki.csproj.CoreCompileInputs.cache
 C:\Adrian\Programowanie\Moje\C#\Calki\Calki\obj\Debug\Calki.exe
 C:\Adrian\Programowanie\Moje\C#\Calki\Calki\obj\Debug\Calki.pdb
+E:\MojeProgramy\NumericMethod\Calki\Calki\bin\Debug\Calki.exe.config
+E:\MojeProgramy\NumericMethod\Calki\Calki\bin\Debug\Calki.exe
+E:\MojeProgramy\NumericMethod\Calki\Calki\bin\Debug\Calki.pdb
+E:\MojeProgramy\NumericMethod\Calki\Calki\obj\Debug\Calki.csprojResolveAssemblyReference.cache
+E:\MojeProgramy\NumericMethod\Calki\Calki\obj\Debug\Calki.csproj.CoreCompileInputs.cache
+E:\MojeProgramy\NumericMethod\Calki\Calki\obj\Debug\Calki.exe
+E:\MojeProgramy\NumericMethod\Calki\Calki\obj\Debug\Calki.pdb
