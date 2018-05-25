@@ -42,27 +42,59 @@ namespace Calki
             Console.WriteLine($"simpsona2 wynik = {wynik}");
             Console.WriteLine();
             Console.WriteLine();
+            Console.WriteLine();
 
-            Mother mother = ReadTableFromFile();
+            Mother motherGauss = ReadTableFromFile();
+            Mother motherGauss2 = ReadTableFromFile();
 
-            WriteMother(mother);
+            Mother motherGaussJordan = ReadTableFromFile();
+            Mother motherGaussJordan2 = ReadTableFromFile();
 
-            double[] wynikGaus = GaussElimination(mother);
+            double[] wynikGauss = Gauss(motherGauss);
+            double[] wynikGauss2 = GaussElimination(motherGauss2);
 
+
+            Console.WriteLine($"wynikGauss");
             int i = 1;
-            foreach (double x in wynikGaus)
+            foreach (double x in wynikGauss)
             {
                 Console.WriteLine($"{i} = {x}");
                 i++;
             }
 
-            double[] wynikGausJordan = GaussJordanElimination(mother);
+            Console.WriteLine();
+            Console.WriteLine($"wynikGauss2");
             i = 1;
-            foreach (double x in wynikGaus)
+            foreach (double x in wynikGauss2)
             {
                 Console.WriteLine($"{i} = {x}");
                 i++;
             }
+
+            Console.WriteLine();
+            Console.WriteLine();
+
+            double[] wynikGausJordan = GaussJordann(motherGaussJordan);
+            double[] wynikGausJordan2 = GaussJordanElimination(motherGaussJordan2);
+
+            Console.WriteLine();
+            Console.WriteLine($"wynikGausJordan");
+            i = 1;
+            foreach (double x in wynikGausJordan)
+            {
+                Console.WriteLine($"{i} = {x}");
+                i++;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($"wynikGausJordan2");
+            i = 1;
+            foreach (double x in wynikGausJordan2)
+            {
+                Console.WriteLine($"{i} = {x}");
+                i++;
+            }
+
 
             Console.ReadKey();
         }
@@ -189,139 +221,180 @@ namespace Calki
                     list.Add(line);
             }
 
-            mother.iloscNiewiadomych = Convert.ToInt32(list[0]);
-            mother.macierz = new double[mother.iloscNiewiadomych, mother.iloscNiewiadomych];
-            mother.wyniki = new double[mother.iloscNiewiadomych];
+            mother.IloscNiewiadomych = Convert.ToInt32(list[0]);
+            mother.Macierz = new double[mother.IloscNiewiadomych, mother.IloscNiewiadomych + 1];
 
-            for (int i = 0; i < mother.iloscNiewiadomych; i++)
+            for (int i = 0; i < mother.IloscNiewiadomych; i++)
             {
                 string[] number = list[i + 1].Split(' ');
 
-                if(number.Count() != mother.iloscNiewiadomych + 1)
+                if(number.Count() != mother.IloscNiewiadomych + 1)
                     continue;
 
-                for (int j = 0; j < mother.iloscNiewiadomych; j++)
-                    mother.macierz[i,j] = Convert.ToDouble(number[j]);
-
-                mother.wyniki[i] = Convert.ToDouble(number[mother.iloscNiewiadomych]);
+                for (int j = 0; j < mother.IloscNiewiadomych + 1; j++)
+                    mother.Macierz[i,j] = Convert.ToDouble(number[j]);
             }
 
             return mother;
         }
 
-        static void WriteMother(Mother mother)
+        static double[] Gauss(Mother mother)
         {
-            for (int i = 0; i < mother.iloscNiewiadomych; i++)
-            {
-                for (int j = 0; j < mother.iloscNiewiadomych; j++)
-                {
-                    Console.Write(mother.macierz[i, j]);
-                    Console.Write("\t");
-                }
+            double[] wynik = new double[mother.IloscNiewiadomych];
 
-                Console.WriteLine(mother.wyniki[i]);
-                Console.Write("\n");
+            double temp = 0;
+
+            //przelatujemy po wierszach ktore sa dla nas glowne (na ich podstawie zerujemy reszte)
+            for (int k = 0; k < mother.IloscNiewiadomych - 1; k++)
+            {
+                // przelatujemy po nastepnych wierszach (ktore chcemy wyzerowac
+                for (int i = k + 1; i < mother.IloscNiewiadomych; i++)
+                {
+                    // obliczamy wartosc ktora musimy odjac zeby wyzerowac dana kolumne w wierszu j
+                    temp = mother.Macierz[i, k] / mother.Macierz[k, k];
+
+                    // obliczamy reszte zmiennych na podstawie tempa i wierszka ktory jest dla nas glowny
+                    for (int j = k; j < mother.IloscNiewiadomych + 1; j++)
+                        mother.Macierz[i, j] -= temp * mother.Macierz[k, j];
+                }
             }
+
+            // przelatujemy po wierszach ale od tylu 
+            for (int k = mother.IloscNiewiadomych - 1; k >= 0; k--)
+            {
+                temp = 0;
+
+                // jesli jest jakis wiersz "pod nami" to obliczamy ta niewiadoma
+                for (int j = k + 1; j < mother.IloscNiewiadomych; j++)
+                    temp += mother.Macierz[k, j] * wynik[j];
+
+                //obliczenie niewiadomej , ostatni element wiersza - temp (inne niewiadome) dzielone przez obliczana niewiadoma
+                wynik[k] = (mother.Macierz[k, mother.IloscNiewiadomych] - temp) / mother.Macierz[k, k];
+            }
+
+            return wynik;
         }
 
         public static double[] GaussElimination(Mother mother)
         {
-            Console.WriteLine("GaussElimination");
-
-            double[] x = new double[mother.iloscNiewiadomych];
-
-            double[,] tmpA = new double[mother.iloscNiewiadomych, mother.iloscNiewiadomych + 1];
-
-            for (int i = 0; i < mother.iloscNiewiadomych; i++)
-            {
-                for (int j = 0; j < mother.iloscNiewiadomych; j++)
-                {
-                    tmpA[i, j] = mother.macierz[i, j];
-                }
-                tmpA[i, mother.iloscNiewiadomych] = mother.wyniki[i];
-            }
+            double[] x = new double[mother.IloscNiewiadomych];
 
             double tmp = 0;
 
-            WriteTableDouble(tmpA, mother.iloscNiewiadomych);
+            //WriteTableDouble(mother.macierz, mother.iloscNiewiadomych);
 
-            for (int k = 0; k < mother.iloscNiewiadomych - 1; k++)
+            for (int k = 0; k < mother.IloscNiewiadomych - 1; k++)
             {
-                for (int i = k + 1; i < mother.iloscNiewiadomych; i++)
+                for (int i = k + 1; i < mother.IloscNiewiadomych; i++)
                 {
-                    tmp = tmpA[i, k] / tmpA[k, k];
-                    for (int j = k; j < mother.iloscNiewiadomych + 1; j++)
+                    tmp = mother.Macierz[i, k] / mother.Macierz[k, k];
+                    for (int j = k; j < mother.IloscNiewiadomych + 1; j++)
                     {
-                        tmpA[i, j] -= tmp * tmpA[k, j];
+                        mother.Macierz[i, j] -= tmp * mother.Macierz[k, j];
                     }
 
-                    WriteTableDouble(tmpA, mother.iloscNiewiadomych);
+                    //WriteTableDouble(mother.macierz, mother.iloscNiewiadomych);
                 }
             }
 
-            WriteTableDouble(tmpA, mother.iloscNiewiadomych);
+            //WriteTableDouble(mother.macierz, mother.iloscNiewiadomych);
 
-            for (int k = mother.iloscNiewiadomych - 1; k >= 0; k--)
+            for (int k = mother.IloscNiewiadomych - 1; k >= 0; k--)
             {
                 tmp = 0;
-                for (int j = k + 1; j < mother.iloscNiewiadomych; j++)
+                for (int j = k + 1; j < mother.IloscNiewiadomych; j++)
                 {
-                    tmp += tmpA[k, j] * x[j];
+                    tmp += mother.Macierz[k, j] * x[j];
                 }
-                x[k] = (tmpA[k, mother.iloscNiewiadomych] - tmp) / tmpA[k, k];
+                x[k] = (mother.Macierz[k, mother.IloscNiewiadomych] - tmp) / mother.Macierz[k, k];
             }
 
             return x;
+        }
+
+        static double[] GaussJordann(Mother mother)
+        {
+            double[] wynik = new double[mother.IloscNiewiadomych];
+
+            double temp = 0;
+
+            for (int k = 0; k < mother.IloscNiewiadomych; k++)
+            {
+                temp = mother.Macierz[k, k];
+
+                for (int i = 0; i < mother.IloscNiewiadomych + 1; i++)
+                    mother.Macierz[k, i] /= temp;
+
+                for (int i = 0; i < mother.IloscNiewiadomych; i++)
+                {
+                    if (i == k)
+                        continue;
+
+                    temp = mother.Macierz[i, k] / mother.Macierz[k, k];
+
+                    for (int j = k; j < mother.IloscNiewiadomych + 1; j++)
+                        mother.Macierz[i, j] -= temp * mother.Macierz[k, j];
+                }
+            }
+
+            for (int i = 0; i < mother.IloscNiewiadomych; i++)
+                wynik[i] = mother.Macierz[i, mother.IloscNiewiadomych];
+
+            return wynik;
         }
 
         public static double[] GaussJordanElimination(Mother mother)
         {
             Console.WriteLine("GaussElimination");
 
-            double[] x = new double[mother.iloscNiewiadomych];
-            double[,] tmpA = new double[mother.iloscNiewiadomych, mother.iloscNiewiadomych + 1];
+            double[] x = new double[mother.IloscNiewiadomych];
             double tmp = 0;
 
-            for (int i = 0; i < mother.iloscNiewiadomych; i++)
-            {
-                for (int j = 0; j < mother.iloscNiewiadomych; j++)
-                {
-                    tmpA[i, j] = mother.macierz[i, j];
-                }
-                tmpA[i, mother.iloscNiewiadomych] = mother.wyniki[i];
-            }
+            //WriteTableDouble(mother.macierz, mother.iloscNiewiadomych);
 
-            WriteTableDouble(tmpA, mother.iloscNiewiadomych);
-
-            for (int k = 0; k < mother.iloscNiewiadomych; k++)
+            for (int k = 0; k < mother.IloscNiewiadomych; k++)
             {
-                tmp = tmpA[k, k];
-                for (int i = 0; i < mother.iloscNiewiadomych + 1; i++)
+                tmp = mother.Macierz[k, k];
+                for (int i = 0; i < mother.IloscNiewiadomych + 1; i++)
                 {
-                    tmpA[k, i] = tmpA[k, i] / tmp;
+                    mother.Macierz[k, i] = mother.Macierz[k, i] / tmp;
                 }
 
-                for (int i = 0; i < mother.iloscNiewiadomych; i++)
+                for (int i = 0; i < mother.IloscNiewiadomych; i++)
                 {
                     if (i != k)
                     {
-                        tmp = tmpA[i, k] / tmpA[k, k];
-                        for (int j = k; j < mother.iloscNiewiadomych + 1; j++)
+                        tmp = mother.Macierz[i, k] / mother.Macierz[k, k];
+                        for (int j = k; j < mother.IloscNiewiadomych + 1; j++)
                         {
-                            tmpA[i, j] -= tmp * tmpA[k, j];
+                            mother.Macierz[i, j] -= tmp * mother.Macierz[k, j];
                         }
                     }
                 }
             }
 
-            WriteTableDouble(tmpA, mother.iloscNiewiadomych);
+            //WriteTableDouble(mother.macierz, mother.iloscNiewiadomych);
 
-            for (int i = 0; i < mother.iloscNiewiadomych; i++)
+            for (int i = 0; i < mother.IloscNiewiadomych; i++)
             {
-                x[i] = tmpA[i, mother.iloscNiewiadomych];
+                x[i] = mother.Macierz[i, mother.IloscNiewiadomych];
             }
 
             return x;
+        }
+
+        static void WriteMother(Mother mother)
+        {
+            for (int i = 0; i < mother.IloscNiewiadomych; i++)
+            {
+                for (int j = 0; j < mother.IloscNiewiadomych + 1; j++)
+                {
+                    Console.Write(mother.Macierz[i, j]);
+                    Console.Write("\t");
+                }
+
+                Console.Write("\n");
+            }
         }
 
         static void WriteTableDouble(double[,] table, int iloscNiewiadomych)
@@ -343,8 +416,7 @@ namespace Calki
 
     public class Mother
     {
-        public double[,] macierz;
-        public double[] wyniki;
-        public int iloscNiewiadomych;
+        public double[,] Macierz;
+        public int IloscNiewiadomych;
     }
 }
